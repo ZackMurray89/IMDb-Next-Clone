@@ -1,7 +1,7 @@
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
 import { createOrUpdateUser, deleteUser } from '@/lib/actions/user.actions';
-import { clerkClient } from '@clerk/nextjs';
+import { clerkClient, auth } from '@clerk/nextjs';
 
 export async function POST(req) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -69,11 +69,26 @@ export async function POST(req) {
 
       if (user && eventType === 'user.created') {
         try {
-          await clerkClient.users.updateUserMetadata(id, {
-            publicMetadata: {
-              userMongoId: user._id,
-            },
-          });
+          const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY;
+          const res = await fetch(
+            `https://api/clerk.dev/v1/users/${id}/metadata`,
+            {
+              method: 'PATCH',
+              headers: {
+                Authorization: `Bearer ${CLERK_SECRET_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                public_metadata: {
+                  userMongoId: user._id.toString(),
+                },
+              }),
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(`HTTP Error Status: ${res.status}`);
+          }
         } catch (error) {
           console.error('Error: Could Not Update User Metadata: ', error);
         }
