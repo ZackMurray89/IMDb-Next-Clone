@@ -12,7 +12,7 @@ export const createOrUpdateUser = async (
   try {
     await connect();
 
-    const user = await User.findByIdAndUpdate(
+    const user = await User.findOneAndUpdate(
       { clerkId: id },
       {
         $set: {

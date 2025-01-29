@@ -13,7 +13,7 @@ export const connect = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       dbName: 'imdb-next-clone',
-      useNewUrlParse: true,
+      useNewUrlParser: true,
       useUnifiedTopology: true,
     });
 
