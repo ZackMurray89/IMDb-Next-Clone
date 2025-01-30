@@ -71,7 +71,7 @@ export async function POST(req) {
         try {
           const CLERK_SECRET_KEY = process.env.CLERK_SECRET_KEY;
           const res = await fetch(
-            `https://api/clerk.dev/v1/users/${id}/metadata`,
+            `https://api.clerk.dev/v1/users/${id}/metadata`,
             {
               method: 'PATCH',
               headers: {
